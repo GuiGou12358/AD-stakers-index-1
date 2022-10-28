@@ -1,0 +1,59 @@
+specVersion: 1.0.0
+name: astar-starter
+version: 0.0.1
+runner:
+  node:
+    name: '@subql/node'
+    version: '*'
+  query:
+    name: '@subql/query'
+    version: '*'
+description: Index stakers on dApp AstarDegen
+repository: 'https://github.com/subquery/astar-subql-starters'
+schema:
+  file: ./schema.graphql
+network:
+  chainId: '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6'
+  endpoint: 'wss://astar.api.onfinality.io/public-wss'
+  dictionary: 'https://api.subquery.network/sq/subquery/astar-dictionary'
+  chaintypes:
+    file: ./dist/chaintypes.js
+dataSources:
+  - kind: substrate/Runtime
+#   - kind: substrate/Wasm
+    startBlock: 2000000
+    mapping:
+      file: ./dist/index.js
+#      file: ./node_modules/@subql/substrate-wasm-processor/dist/bundle.js
+      handlers:
+        - handler: handleEventAssets
+          kind: substrate/EventHandler
+          filter:
+            module: assets
+        - handler: handleEventBalances
+          kind: substrate/EventHandler
+          filter:
+            module: balances
+        - handler: handleEventUtility
+          kind: substrate/EventHandler
+          filter:
+            module: utility
+        - handler: handleEventDappsStaking
+          kind: substrate/EventHandler
+          filter:
+            module: dappsstaking
+        - handler: handleBondAndStake
+          kind: substrate/EventHandler
+          filter:
+            module: dappsstaking
+            method: BondAndStake
+#            success: true
+#        - handler: handleBlock
+#          kind: substrate/BlockHandler
+#        - handler: handleEvent
+#          kind: substrate/EventHandler
+#          filter:
+#            module: balances
+#            method: Deposit
+#        - handler: handleCall
+#          kind: substrate/CallHandler
