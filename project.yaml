@@ -20,40 +20,31 @@ network:
     file: ./dist/chaintypes.js
 dataSources:
   - kind: substrate/Runtime
-#   - kind: substrate/Wasm
-    startBlock: 2000000
+    startBlock: 2168680
     mapping:
       file: ./dist/index.js
-#      file: ./node_modules/@subql/substrate-wasm-processor/dist/bundle.js
       handlers:
-        - handler: handleEventAssets
-          kind: substrate/EventHandler
-          filter:
-            module: assets
-        - handler: handleEventBalances
-          kind: substrate/EventHandler
-          filter:
-            module: balances
-        - handler: handleEventUtility
-          kind: substrate/EventHandler
-          filter:
-            module: utility
+# handlers on the events of teh module balance works fine
+#        - handler: handleEventAssets
+#          kind: substrate/EventHandler
+#          filter:
+#            module: assets
+# handlers on the events of teh module balance works fine
+#        - handler: handleEventBalances
+#          kind: substrate/EventHandler
+#          filter:
+#            module: balances
+# handlers on the events of teh module balance works fine
+#        - handler: handleEventUtility
+#          kind: substrate/EventHandler
+#          filter:
+#            module: utility
         - handler: handleEventDappsStaking
           kind: substrate/EventHandler
           filter:
             module: dappsstaking
-        - handler: handleBondAndStake
-          kind: substrate/EventHandler
-          filter:
-            module: dappsstaking
-            method: BondAndStake
-#            success: true
-#        - handler: handleBlock
-#          kind: substrate/BlockHandler
-#        - handler: handleEvent
+#        - handler: handleBondAndStake
 #          kind: substrate/EventHandler
 #          filter:
-#            module: balances
-#            method: Deposit
-#        - handler: handleCall
-#          kind: substrate/CallHandler
+#            module: dappsstaking
+#            method: BondAndStake
