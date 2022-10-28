@@ -24,21 +24,22 @@ dataSources:
     mapping:
       file: ./dist/index.js
       handlers:
-# handlers on the events of teh module balance works fine
+# handlers on the events of the module assets works fine
 #        - handler: handleEventAssets
 #          kind: substrate/EventHandler
 #          filter:
 #            module: assets
-# handlers on the events of teh module balance works fine
+# handlers on the events of the module balances works fine
 #        - handler: handleEventBalances
 #          kind: substrate/EventHandler
 #          filter:
 #            module: balances
-# handlers on the events of teh module balance works fine
+# handlers on the events of the module utility works fine
 #        - handler: handleEventUtility
 #          kind: substrate/EventHandler
 #          filter:
 #            module: utility
+# handlers on the events of the module dappsstaking doesn't work
         - handler: handleEventDappsStaking
           kind: substrate/EventHandler
           filter:
