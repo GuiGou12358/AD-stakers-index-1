@@ -43,7 +43,7 @@ dataSources:
         - handler: handleEventDappsStaking
           kind: substrate/EventHandler
           filter:
-            module: dappsstaking
+            module: dappsStaking
 #        - handler: handleBondAndStake
 #          kind: substrate/EventHandler
 #          filter:
