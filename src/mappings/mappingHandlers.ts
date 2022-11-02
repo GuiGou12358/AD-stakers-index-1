@@ -1,129 +1,145 @@
 import {
-  SubstrateExtrinsic,
-  SubstrateEvent,
-  SubstrateBlock,
+	SubstrateEvent,
 } from "@subql/types";
 
-import { Account, BondAndStake } from "../types";
-import { Balance } from "@polkadot/types/interfaces";
+import {
+	Account,
+	BondAndStake,
+	UnbondAndUnstake,
+	NominationTransferIn,
+	NominationTransferOut
+} from "../types";
 
+import {
+	Balance
+} from "@polkadot/types/interfaces";
 
-export async function handleEventUtility(event: SubstrateEvent): Promise<void> {
-  const {
-    event: {
-      data: [],
-    },
-  } = event;
-   await logger.info("---------- Utility  --------- ");
-   await logger.info(event.block.block.header.hash.toString());
-}
+const TARGET_CONTRACT = "0xd59fc6bfd9732ab19b03664a45dc29b8421bda9a";
 
-export async function handleEventAssets(event: SubstrateEvent): Promise<void> {
-  const {
-    event: {
-      data: [],
-    },
-  } = event;
-   await logger.info("---------- Assets  --------- ");
-   await logger.info(event.block.block.header.hash.toString());
-}
+export async function bondAndStake(event: SubstrateEvent): Promise<void> {
+    const {
+        event: {
+            data: [account, smartContract, balanceOf],
+        },
+    } = event;
 
-
-export async function handleEventBalances(event: SubstrateEvent): Promise<void> {
-  const {
-    event: {
-      data: [],
-    },
-  } = event;
-   await logger.info("---------- Balances  --------- ");
-   await logger.info(event.block.block.header.hash.toString());
-   //await logger.info(event.toArray().flat(Infinity).toString());
-   //await logger.info(event.block.block.toArray().flat(Infinity).toString());
-   //await logger.info(event.block.block.header.toArray().flat(Infinity).toString());
-}
-
-export async function handleEventDappsStaking(event: SubstrateEvent): Promise<void> {
-  const {
-    event: {
-      data: [],
-    },
-  } = event;
-   await logger.info("---------- DappsStaking  --------- ");
-   await logger.info(event.block.block.header.hash.toString());
-}
-
-
-export async function handleBondAndStake(event: SubstrateEvent): Promise<void> {
-  const {
-    event: {
-      data: [account, smartcontract, balance],
-    },
-  } = event;
-
-
-   await logger.info("---------- BondAndStake  --------- ");
-   await logger.info(event.block.block.header.hash.toString());
-   await logger.info("AccountId: " + account.toString());
-   await logger.info("SmartContract: " + smartcontract.toString());
-   await logger.info("BalanceOf: " +  (balance as Balance).toBigInt());
-
-/*
-   const targettedSmartContract = "0x70d264472327b67898c919809a9dc4759b6c0f27";
-
-   if (event.address == targettedAddress){
-       await logger.info("Correct contract");
-   } else {
-       await logger.info("Other contract");
-       return;
+    if (!smartContract.toString().includes(TARGET_CONTRACT)){
+		return;
     }
-*/
-   const userAccount = await Account.get(account.toString());
-   if (!userAccount) {
-      await new Account(account.toString()).save();
-   }
 
-  const stake = new BondAndStake(event.block.block.header.hash.toString());
-  stake.accountId = account.toString();
-  stake.amount = (balance as Balance).toBigInt();
-  await stake.save();
+    await logger.info("---------- DappsStaking - BondAndStake --------- ");
+	await logger.info(event.block.block.header.hash.toString());
+	await logger.info(event.block.block.header.number.toNumber() + " - " + event.idx);
+	await logger.info("SmartContract: " + smartContract.toString());
+	await logger.info("AccountId: " + account.toString());
+	await logger.info("BalanceOf: " + balanceOf);
+
+    const amount = (balanceOf as Balance).toBigInt();
+
+    let userAccount = await Account.get(account.toString());
+    if (!userAccount) {
+		userAccount = new Account(account.toString());
+		userAccount.totalStake = BigInt(0);
+    }
+	userAccount.totalStake += amount;
+	await userAccount.save();
+
+	let stake = new BondAndStake(`${event.block.block.header.number.toNumber()}-${event.idx}`);
+	stake.accountId = account.toString();
+	stake.amount = amount;
+	await stake.save();
 }
 
 
+export async function unbondAndUnstake(event: SubstrateEvent): Promise<void> {
+    const {
+        event: {
+            data: [account, smartContract, balanceOf],
+        },
+    } = event;
 
+    if (!smartContract.toString().includes(TARGET_CONTRACT)){
+		return;
+    }
 
-/*
-export async function handleBlock(block: SubstrateBlock): Promise<void> {
-  //Create a new starterEntity with ID using block hash
-  let record = new StarterEntity(block.block.header.hash.toString());
-  //Record block number
-  record.field1 = block.block.header.number.toNumber();
-  await record.save();
+	await logger.info("---------- DappsStaking - UnbondAndUnstake --------- ");
+	await logger.info(event.block.block.header.hash.toString());
+	await logger.info(event.block.block.header.number.toNumber());
+	await logger.info(event.idx);
+	await logger.info("SmartContract: " + smartContract.toString());
+	await logger.info("AccountId: " + account.toString());
+	await logger.info("BalanceOf: " + balanceOf);
+
+    const amount = (balanceOf as Balance).toBigInt();
+
+    let userAccount = await Account.get(account.toString());
+    if (!userAccount) {
+		userAccount = new Account(account.toString());
+		userAccount.totalStake = BigInt(0);
+    }
+	userAccount.totalStake -= amount;
+	await userAccount.save();
+
+	let unstake = new UnbondAndUnstake(`${event.block.block.header.number.toNumber()}-${event.idx}`);
+	unstake.accountId = account.toString();
+	unstake.amount = amount;
+	await unstake.save();
 }
 
-export async function handleEvent(event: SubstrateEvent): Promise<void> {
-  const {
-    event: {
-      data: [account, balance],
-    },
-  } = event;
-  //Retrieve the record by its ID
-  const record = await StarterEntity.get(
-    event.block.block.header.hash.toString()
-  );
-  record.field2 = account.toString();
-  //Big integer type Balance of a transfer event
-  record.field3 = (balance as Balance).toBigInt();
-  await record.save();
-}
+export async function nominationTransfer(event: SubstrateEvent): Promise<void> {
+    const {
+        event: {
+            data: [account, originSmartContract, balanceOf, targetSmartContract],
+        },
+    } = event;
 
-export async function handleCall(extrinsic: SubstrateExtrinsic): Promise<void> {
-  const record = await StarterEntity.get(
-    extrinsic.block.block.header.hash.toString()
-  );
-  //Date type timestamp
-  record.field4 = extrinsic.block.timestamp;
-  //Boolean tyep
-  record.field5 = true;
-  await record.save();
+    if (!originSmartContract.toString().includes(TARGET_CONTRACT)
+		&& !targetSmartContract.toString().includes(TARGET_CONTRACT)
+	){
+		return;
+    }
+
+    let userAccount = await Account.get(account.toString());
+    if (!userAccount) {
+		userAccount = new Account(account.toString());
+		userAccount.totalStake = BigInt(0);
+    }
+
+	const amount = (balanceOf as Balance).toBigInt();
+
+    if (targetSmartContract.toString().includes(TARGET_CONTRACT)){
+    	await logger.info("---------- DappsStaking - nominationTransferIn --------- ");
+		await logger.info("SmartContract: " + targetSmartContract.toString());
+    	await logger.info(event.block.block.header.hash.toString());
+    	await logger.info("AccountId: " + account.toString());
+    	await logger.info("BalanceOf: " + balanceOf);
+
+		userAccount.totalStake += amount;
+		await userAccount.save();
+
+		let transfer = new NominationTransferIn(`${event.block.block.header.number.toNumber()}-${event.idx}`);
+		transfer.accountId = account.toString();
+		transfer.amount = amount;
+		await transfer.save();
+
+    } else if (originSmartContract.toString().includes(TARGET_CONTRACT)){
+    	await logger.info("---------- DappsStaking - nominationTransferOut --------- ");
+    	await logger.info(event.block.block.header.hash.toString());
+		await logger.info("SmartContract: " + originSmartContract.toString());
+    	await logger.info("AccountId: " + account.toString());
+    	await logger.info("BalanceOf: " + balanceOf);
+
+		userAccount.totalStake -= amount;
+		await userAccount.save();
+
+		let transfer = new NominationTransferOut(`${event.block.block.header.number.toNumber()}-${event.idx}`);
+		transfer.accountId = account.toString();
+		transfer.amount = amount;
+		await transfer.save();
+
+    } else {
+    	await logger.info("---------- DappsStaking - nominationTransfer ERROR --------- ");
+    	await logger.info(event.block.block.header.hash.toString());
+	}
+
 }
-*/

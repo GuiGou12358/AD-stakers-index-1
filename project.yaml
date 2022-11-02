@@ -20,32 +20,26 @@ network:
     file: ./dist/chaintypes.js
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 2168680
+#    startBlock: 442690
+    startBlock: 2200520
     mapping:
       file: ./dist/index.js
       handlers:
-# handlers on the events of the module assets works fine
-#        - handler: handleEventAssets
-#          kind: substrate/EventHandler
-#          filter:
-#            module: assets
-# handlers on the events of the module balances works fine
-#        - handler: handleEventBalances
-#          kind: substrate/EventHandler
-#          filter:
-#            module: balances
-# handlers on the events of the module utility works fine
-#        - handler: handleEventUtility
-#          kind: substrate/EventHandler
-#          filter:
-#            module: utility
-# handlers on the events of the module dappsstaking doesn't work
-        - handler: handleEventDappsStaking
+        - handler: bondAndStake
           kind: substrate/EventHandler
           filter:
             module: dappsStaking
-#        - handler: handleBondAndStake
-#          kind: substrate/EventHandler
-#          filter:
-#            module: dappsstaking
-#            method: BondAndStake
+            method: BondAndStake
+        - handler: unbondAndUnstake
+          kind: substrate/EventHandler
+          filter:
+            module: dappsStaking
+            method: UnbondAndUnstake
+        - handler: nominationTransfer
+          kind: substrate/EventHandler
+          filter:
+            module: dappsStaking
+            method: NominationTransfer
+
+
+
