@@ -1,4 +1,4 @@
-# SubQuery - Indexer For dApps AstarDegen in Astar Network
+# SubQuery - Index stakers for the dApp AstarDegen in Astar Network
 
 This project index all accounts staking in the given dApp
 
@@ -65,55 +65,52 @@ Finally, you should see a GraphQL playground is showing in the explorer and the 
 
 For the `subql-starter` project, you can try to query with the following code to get a taste of how it works.
 
-
+All stakers
 ```graphql
 query{
-    # Write your query or mutation here
-    query{
-        accounts {
-            totalCount
-            nodes{
-                id
-                totalStake
-            }
+    accounts {
+        totalCount
+        nodes{
+            id
+            totalStake
         }
     }
+}
 ```
 
+All stakers with operations (stake/unstake/nominationTranfer)
 ```graphql
 query{
-    # Write your query or mutation here
-    query{
-        accounts {
-            totalCount
-            nodes{
-                id
-                totalStake
-                stakes {
-                    nodes {
-                        id
-                        amount
-                    }
+    accounts {
+        totalCount
+        nodes{
+            id
+            totalStake
+            stakes {
+                nodes {
+                    id
+                    amount
                 }
-                unstakes {
-                    nodes {
-                        id
-                        amount
-                    }
+            }
+            unstakes {
+                nodes {
+                    id
+                    amount
                 }
-                nominationTransferIn {
-                    nodes {
-                        id
-                        amount
-                    }
+            }
+            nominationTransferIn {
+                nodes {
+                    id
+                    amount
                 }
-                nominationTransferOut {
-                    nodes {
-                        id
-                        amount
-                    }
+            }
+            nominationTransferOut {
+                nodes {
+                    id
+                    amount
                 }
             }
         }
     }
+}
 ```
