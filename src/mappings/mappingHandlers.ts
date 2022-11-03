@@ -28,11 +28,11 @@ export async function bondAndStake(event: SubstrateEvent): Promise<void> {
     }
 
     await logger.info("---------- DappsStaking - BondAndStake --------- ");
-	await logger.info(event.block.block.header.hash.toString());
-	await logger.info(event.block.block.header.number.toNumber() + " - " + event.idx);
-	await logger.info("SmartContract: " + smartContract.toString());
-	await logger.info("AccountId: " + account.toString());
-	await logger.info("BalanceOf: " + balanceOf);
+	//await logger.info(event.block.block.header.hash.toString());
+	//await logger.info(event.block.block.header.number.toNumber() + " - " + event.idx);
+	//await logger.info("SmartContract: " + smartContract.toString());
+	//await logger.info("AccountId: " + account.toString());
+	//await logger.info("BalanceOf: " + balanceOf);
 
     const amount = (balanceOf as Balance).toBigInt();
 
@@ -63,12 +63,12 @@ export async function unbondAndUnstake(event: SubstrateEvent): Promise<void> {
     }
 
 	await logger.info("---------- DappsStaking - UnbondAndUnstake --------- ");
-	await logger.info(event.block.block.header.hash.toString());
-	await logger.info(event.block.block.header.number.toNumber());
-	await logger.info(event.idx);
-	await logger.info("SmartContract: " + smartContract.toString());
-	await logger.info("AccountId: " + account.toString());
-	await logger.info("BalanceOf: " + balanceOf);
+	//await logger.info(event.block.block.header.hash.toString());
+	//await logger.info(event.block.block.header.number.toNumber());
+	//await logger.info(event.idx);
+	//await logger.info("SmartContract: " + smartContract.toString());
+	//await logger.info("AccountId: " + account.toString());
+	//await logger.info("BalanceOf: " + balanceOf);
 
     const amount = (balanceOf as Balance).toBigInt();
 
@@ -85,6 +85,7 @@ export async function unbondAndUnstake(event: SubstrateEvent): Promise<void> {
 	unstake.amount = amount;
 	await unstake.save();
 }
+
 
 export async function nominationTransfer(event: SubstrateEvent): Promise<void> {
     const {
@@ -109,10 +110,10 @@ export async function nominationTransfer(event: SubstrateEvent): Promise<void> {
 
     if (targetSmartContract.toString().includes(TARGET_CONTRACT)){
     	await logger.info("---------- DappsStaking - nominationTransferIn --------- ");
-		await logger.info("SmartContract: " + targetSmartContract.toString());
-    	await logger.info(event.block.block.header.hash.toString());
-    	await logger.info("AccountId: " + account.toString());
-    	await logger.info("BalanceOf: " + balanceOf);
+		//await logger.info("SmartContract: " + targetSmartContract.toString());
+    	//await logger.info(event.block.block.header.hash.toString());
+    	//await logger.info("AccountId: " + account.toString());
+		//await logger.info("BalanceOf: " + balanceOf);
 
 		userAccount.totalStake += amount;
 		await userAccount.save();
@@ -124,10 +125,10 @@ export async function nominationTransfer(event: SubstrateEvent): Promise<void> {
 
     } else if (originSmartContract.toString().includes(TARGET_CONTRACT)){
     	await logger.info("---------- DappsStaking - nominationTransferOut --------- ");
-    	await logger.info(event.block.block.header.hash.toString());
-		await logger.info("SmartContract: " + originSmartContract.toString());
-    	await logger.info("AccountId: " + account.toString());
-    	await logger.info("BalanceOf: " + balanceOf);
+    	//await logger.info(event.block.block.header.hash.toString());
+		//await logger.info("SmartContract: " + originSmartContract.toString());
+    	//await logger.info("AccountId: " + account.toString());
+    	//await logger.info("BalanceOf: " + balanceOf);
 
 		userAccount.totalStake -= amount;
 		await userAccount.save();
@@ -141,5 +142,4 @@ export async function nominationTransfer(event: SubstrateEvent): Promise<void> {
     	await logger.info("---------- DappsStaking - nominationTransfer ERROR --------- ");
     	await logger.info(event.block.block.header.hash.toString());
 	}
-
 }
