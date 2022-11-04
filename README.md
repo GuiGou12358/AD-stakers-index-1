@@ -69,7 +69,9 @@ For the `subql-starter` project, you can try to query with the following code to
 All stakers with their stake
 ```graphql
 query{
-    accounts {
+    accounts (
+        filter: { totalStake : {notEqualTo: "0"}}
+    ) {
         totalCount
         nodes{
             id
